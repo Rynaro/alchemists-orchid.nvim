@@ -33,7 +33,7 @@ function M.setup()
 
   vim.opt.termguicolors = true
   vim.opt.background    = "dark"
-  vim.g.colors_name     = "alchemists_orchid"
+  vim.g.colors_name     = "alchemists-orchid"
 
   local c = M.palette
 

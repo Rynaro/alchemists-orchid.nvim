@@ -1,4 +1,4 @@
--- plugin/alchemists_orchid.lua
+-- plugin/alchemists-orchid.lua
 -- This file is sourced automatically by Neovim after startup,
 -- so it can set up your colorscheme.
 
@@ -6,6 +6,6 @@
 vim.opt.termguicolors = true
 
 -- Load and apply the palette
-require("alchemists_orchid").setup()
-vim.cmd("colorscheme alchemists_orchid")
+require("alchemists-orchid").setup()
+vim.cmd("colorscheme alchemists-orchid")
 
