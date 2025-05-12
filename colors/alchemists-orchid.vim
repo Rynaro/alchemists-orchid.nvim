@@ -1,2 +1,2 @@
-lua require('alchemists_orchid').setup()
+lua require('alchemists-orchid').setup()
 
