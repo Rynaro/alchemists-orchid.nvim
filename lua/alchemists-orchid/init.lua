@@ -7,6 +7,7 @@ local M = {}
 -- Load modules
 local highlights = require('alchemists-orchid.highlights')
 local terminal = require('alchemists-orchid.terminal')
+local version = require('alchemists-orchid._version')
 
 -- Load palettes
 local dark_palette = require('alchemists-orchid.palettes.dark')
@@ -96,5 +97,8 @@ end
 
 -- Export palette for external access (backward compatibility)
 M.palette = dark_palette.palette
+
+-- Export version information
+M.version = version
 
 return M
