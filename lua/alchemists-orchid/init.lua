@@ -8,19 +8,28 @@ local M = {}
 local highlights = require('alchemists-orchid.highlights')
 local terminal = require('alchemists-orchid.terminal')
 local version = require('alchemists-orchid._version')
+local persistence = require('alchemists-orchid.persistence')
 
 -- Load palettes
 local dark_palette = require('alchemists-orchid.palettes.dark')
 local light_palette = require('alchemists-orchid.palettes.light')
 local sepia_palette = require('alchemists-orchid.palettes.sepia')
 
+-- Available modes
+local available_modes = { 'dark', 'light', 'sepia' }
+
 -- Default configuration
 local default_config = {
   mode = 'dark',           -- 'dark', 'light', 'sepia'
   overrides = {},          -- Optional color overrides
-  transparent = false,      -- Transparent background
-  italic_comments = true,   -- Italic comments
+  transparent = false,     -- Transparent background
+  italic_comments = true,  -- Italic comments
+  persist = false,         -- Persist theme selection across sessions
+  persist_path = nil,      -- Custom path for persistence file (optional)
 }
+
+-- Current active configuration (stored for re-application)
+local current_config = nil
 
 -- Merge color overrides into palette
 local function apply_overrides(palette, overrides)
@@ -49,13 +58,18 @@ local function get_palette(mode)
   end
 end
 
--- Setup function
-function M.setup(config)
-  config = config or {}
-  
-  -- Merge with defaults
-  local opts = vim.tbl_deep_extend('force', default_config, config)
-  
+-- Validate mode
+local function is_valid_mode(mode)
+  for _, m in ipairs(available_modes) do
+    if m == mode then
+      return true
+    end
+  end
+  return false
+end
+
+-- Apply theme with given options (internal function)
+local function apply_theme(opts)
   -- Ensure termguicolors is set
   vim.opt.termguicolors = true
   
@@ -83,14 +97,111 @@ function M.setup(config)
   terminal.apply(palette)
 end
 
+-- Setup function
+function M.setup(config)
+  config = config or {}
+  
+  -- Merge with defaults
+  local opts = vim.tbl_deep_extend('force', default_config, config)
+  
+  -- If persistence is enabled and no explicit mode given, try to load saved mode
+  if opts.persist and config.mode == nil then
+    local saved_mode = persistence.load({ path = opts.persist_path })
+    if saved_mode and is_valid_mode(saved_mode) then
+      opts.mode = saved_mode
+    end
+  end
+  
+  -- Store current config for later use
+  current_config = opts
+  
+  -- Apply the theme
+  apply_theme(opts)
+end
+
+-- Switch to a specific mode
+function M.switch(mode)
+  if not current_config then
+    vim.notify('alchemists-orchid: Please call setup() first', vim.log.levels.WARN)
+    return false
+  end
+  
+  if not is_valid_mode(mode) then
+    vim.notify(
+      string.format('alchemists-orchid: Invalid mode "%s". Available: %s', mode, table.concat(available_modes, ', ')),
+      vim.log.levels.ERROR
+    )
+    return false
+  end
+  
+  -- Update mode in current config
+  current_config.mode = mode
+  
+  -- Re-apply theme
+  apply_theme(current_config)
+  
+  -- Persist if enabled
+  if current_config.persist then
+    persistence.save(mode, { path = current_config.persist_path })
+  end
+  
+  vim.notify(string.format('alchemists-orchid: Switched to %s mode', mode), vim.log.levels.INFO)
+  return true
+end
+
+-- Toggle/cycle through available modes
+function M.toggle()
+  if not current_config then
+    vim.notify('alchemists-orchid: Please call setup() first', vim.log.levels.WARN)
+    return nil
+  end
+  
+  -- Find current mode index
+  local current_index = 1
+  for i, m in ipairs(available_modes) do
+    if m == current_config.mode then
+      current_index = i
+      break
+    end
+  end
+  
+  -- Get next mode (cycle)
+  local next_index = (current_index % #available_modes) + 1
+  local next_mode = available_modes[next_index]
+  
+  -- Switch to next mode
+  M.switch(next_mode)
+  
+  return next_mode
+end
+
+-- Get current mode
+function M.get_mode()
+  if current_config then
+    return current_config.mode
+  end
+  return nil
+end
+
+-- Get list of available modes
+function M.get_modes()
+  return vim.deepcopy(available_modes)
+end
+
+-- Get current palette (useful for statusline integration)
+function M.get_palette()
+  if current_config then
+    local palette = get_palette(current_config.mode)
+    return apply_overrides(palette, current_config.overrides)
+  end
+  return dark_palette.palette
+end
+
 -- Backward compatibility: support old override syntax
--- If config is a table with color keys directly, treat as overrides
 function M.setup_legacy(config)
   if config and not config.mode and not config.transparent and not config.italic_comments then
-    -- Old syntax: config is just overrides
     return M.setup({ overrides = config })
   else
-    -- New syntax or empty
     return M.setup(config)
   end
 end
