@@ -107,6 +107,98 @@ To apply changes without restarting Neovim:
 :lua require('alchemists-orchid').setup({ mode = 'light' })
 ```
 
+---
+
+## 🔄 Theme Switching
+
+### Commands
+
+Alchemists Orchid provides convenient commands for switching themes:
+
+- `:AlchemistsOrchid` - Display current theme mode
+- `:AlchemistsOrchid dark` - Switch to dark mode
+- `:AlchemistsOrchid light` - Switch to light mode  
+- `:AlchemistsOrchid sepia` - Switch to sepia mode
+- `:AlchemistsOrchidToggle` - Cycle through modes (dark → light → sepia)
+
+### Lua API
+
+You can also switch themes programmatically:
+
+```lua
+local orchid = require('alchemists-orchid')
+
+-- Switch to a specific mode
+orchid.switch('dark')
+orchid.switch('light')
+orchid.switch('sepia')
+
+-- Toggle/cycle through modes
+orchid.toggle()
+
+-- Get current mode
+local mode = orchid.get_mode()
+
+-- Get list of available modes
+local modes = orchid.get_modes()  -- {'dark', 'light', 'sepia'}
+
+-- Get current palette (useful for statusline integration)
+local palette = orchid.get_palette()
+```
+
+### Keybindings
+
+Example keybinding configuration:
+
+```lua
+-- Toggle theme mode with <leader>tt
+vim.keymap.set('n', '<leader>tt', function()
+  require('alchemists-orchid').toggle()
+end, { desc = 'Toggle theme mode' })
+
+-- Quick access to specific modes
+vim.keymap.set('n', '<leader>td', function()
+  require('alchemists-orchid').switch('dark')
+end, { desc = 'Dark mode' })
+
+vim.keymap.set('n', '<leader>tl', function()
+  require('alchemists-orchid').switch('light')
+end, { desc = 'Light mode' })
+
+vim.keymap.set('n', '<leader>ts', function()
+  require('alchemists-orchid').switch('sepia')
+end, { desc = 'Sepia mode' })
+```
+
+---
+
+## 💾 Theme Persistence
+
+To persist your theme selection across Neovim sessions, enable the `persist` option:
+
+```lua
+require('alchemists-orchid').setup({
+  persist = true,  -- Remember last selected theme
+})
+```
+
+When `persist` is enabled:
+- Theme preference is saved to `~/.cache/nvim/alchemists-orchid/theme.json`
+- On startup, the saved theme is automatically loaded
+- Calling `:AlchemistsOrchid <mode>` or `toggle()` updates the saved preference
+
+### Custom Persistence Path
+
+You can specify a custom path for the persistence file:
+
+```lua
+require('alchemists-orchid').setup({
+  persist = true,
+  persist_path = vim.fn.expand('~/.config/nvim/alchemists-orchid-theme.json'),
+})
+```
+
+---
 
 ## 🎨 Palettes
 
