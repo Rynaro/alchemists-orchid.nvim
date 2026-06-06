@@ -26,12 +26,12 @@ end, {
   complete = function()
     return require('alchemists-orchid').get_modes()
   end,
-  desc = 'Switch alchemists-orchid theme mode (dark, light, sepia)',
+  desc = 'Switch alchemists-orchid theme mode (dark, light, sepia, sepia_dark)',
 })
 
 -- Toggle/cycle through modes: :AlchemistsOrchidToggle
 vim.api.nvim_create_user_command('AlchemistsOrchidToggle', function()
   require('alchemists-orchid').toggle()
 end, {
-  desc = 'Toggle alchemists-orchid theme mode (cycles: dark → light → sepia)',
+  desc = 'Toggle alchemists-orchid theme mode (cycles: dark → light → sepia → sepia_dark)',
 })

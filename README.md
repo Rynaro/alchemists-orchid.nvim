@@ -1,22 +1,32 @@
-# Alchemist’s Orchid.nvim
+# Alchemist's Orchid.nvim
 
 A pastel-infused colorscheme for Neovim that blends serene Arctic blues with soft purples and pinks—designed to evoke the crafting of a magical elixir in your editor.
 
 ---
 
-## 🌟 Features
+## Migration Note (v3.0)
 
-* **Multiple Palette Modes**: Dark, Light, and Sepia modes for different preferences and use cases
+**v3.0: `sepia` is now a light cream theme (Alchemist's Orchid v2.0 canon).** If you preferred the previous warm dark sepia, set `mode = 'sepia_dark'`:
+
+```lua
+require('alchemists-orchid').setup({ mode = 'sepia_dark' })
+```
+
+---
+
+## Features
+
+* **Multiple Palette Modes**: Dark, Light, Sepia (light cream), and Sepia Dark modes for different preferences and use cases
 * **Accessibility First**: WCAG AAA compliant with reduced saturation for halation prevention
 * **Arctic Inspiration**: Hints of cool, muted blues against a dark backdrop
 * **Pastel Palette**: Emphasizes gentle pinks and purples for a soothing visual experience
 * **True Color Support**: Requires `termguicolors` for full 24-bit color fidelity
 * **Automatic Loader**: Ships with a `plugin/alchemists-orchid.lua` autoloader—no manual `:colorscheme` needed
-* **Terminal Integration**: Includes terminal color definitions for Neovim’s integrated terminal.
+* **Terminal Integration**: Includes terminal color definitions for Neovim's integrated terminal.
 
 ---
 
-## 🚀 Installation
+## Installation
 
 Use your favorite plugin manager to install. Below are examples for **vim-plug**, **packer.nvim**, and **dein**.
 
@@ -42,11 +52,11 @@ end)
 call dein#add('Rynaro/alchemists-orchid.nvim')
 ```
 
-After installing, restart Neovim— the plugin’s autoloader will set `termguicolors`, apply the palette, and activate `alchemists-orchid` automatically.
+After installing, restart Neovim— the plugin's autoloader will set `termguicolors`, apply the palette, and activate `alchemists-orchid` automatically.
 
 ---
 
-## 🛠 Usage
+## Usage
 
 ### Minimal Configuration
 
@@ -59,7 +69,7 @@ vim.cmd('colorscheme alchemists-orchid')
 
 ### Switching Palette Modes
 
-Choose from three palette modes:
+Choose from four palette modes:
 
 **Dark Mode** (default):
 ```lua
@@ -68,17 +78,24 @@ require('alchemists-orchid').setup({
 })
 ```
 
-**Light Mode** (for users with dark-interface discomfort):
+**Light Mode** (off-white background, vivid dark accents):
 ```lua
 require('alchemists-orchid').setup({
   mode = 'light'
 })
 ```
 
-**Sepia Mode** (warm tones for extended coding sessions):
+**Sepia Mode** (warm cream background for reduced blue-light, extended sessions):
 ```lua
 require('alchemists-orchid').setup({
   mode = 'sepia'
+})
+```
+
+**Sepia Dark Mode** (warm dark-brown background; the previous v2.x sepia):
+```lua
+require('alchemists-orchid').setup({
+  mode = 'sepia_dark'
 })
 ```
 
@@ -88,10 +105,10 @@ All configuration options:
 
 ```lua
 require('alchemists-orchid').setup({
-  mode = 'dark',              -- 'dark', 'light', or 'sepia'
+  mode = 'dark',              -- 'dark', 'light', 'sepia', or 'sepia_dark'
   overrides = {               -- Optional color overrides
-    pink = '#E8A4CC',
-    purple = '#B89BC0',
+    red    = '#E8A4CC',
+    purple = '#C89BD0',
   },
   transparent = false,        -- Transparent background
   italic_comments = true,     -- Italic comments (default: true)
@@ -109,7 +126,7 @@ To apply changes without restarting Neovim:
 
 ---
 
-## 🔄 Theme Switching
+## Theme Switching
 
 ### Commands
 
@@ -117,9 +134,10 @@ Alchemists Orchid provides convenient commands for switching themes:
 
 - `:AlchemistsOrchid` - Display current theme mode
 - `:AlchemistsOrchid dark` - Switch to dark mode
-- `:AlchemistsOrchid light` - Switch to light mode  
+- `:AlchemistsOrchid light` - Switch to light mode
 - `:AlchemistsOrchid sepia` - Switch to sepia mode
-- `:AlchemistsOrchidToggle` - Cycle through modes (dark → light → sepia)
+- `:AlchemistsOrchid sepia_dark` - Switch to sepia dark mode
+- `:AlchemistsOrchidToggle` - Cycle through modes (dark → light → sepia → sepia_dark)
 
 ### Lua API
 
@@ -132,6 +150,7 @@ local orchid = require('alchemists-orchid')
 orchid.switch('dark')
 orchid.switch('light')
 orchid.switch('sepia')
+orchid.switch('sepia_dark')
 
 -- Toggle/cycle through modes
 orchid.toggle()
@@ -140,7 +159,7 @@ orchid.toggle()
 local mode = orchid.get_mode()
 
 -- Get list of available modes
-local modes = orchid.get_modes()  -- {'dark', 'light', 'sepia'}
+local modes = orchid.get_modes()  -- {'dark', 'light', 'sepia', 'sepia_dark'}
 
 -- Get current palette (useful for statusline integration)
 local palette = orchid.get_palette()
@@ -168,11 +187,15 @@ end, { desc = 'Light mode' })
 vim.keymap.set('n', '<leader>ts', function()
   require('alchemists-orchid').switch('sepia')
 end, { desc = 'Sepia mode' })
+
+vim.keymap.set('n', '<leader>tS', function()
+  require('alchemists-orchid').switch('sepia_dark')
+end, { desc = 'Sepia dark mode' })
 ```
 
 ---
 
-## 💾 Theme Persistence
+## Theme Persistence
 
 To persist your theme selection across Neovim sessions, enable the `persist` option:
 
@@ -200,7 +223,7 @@ require('alchemists-orchid').setup({
 
 ---
 
-## 🎨 Palettes
+## Palettes
 
 ### Dark Mode (Default)
 WCAG AAA compliant (10.26:1 contrast ratio) with reduced saturation for halation prevention:
@@ -211,23 +234,77 @@ WCAG AAA compliant (10.26:1 contrast ratio) with reduced saturation for halation
 | ---------- | --------- |
 | Background | `#2E3440` |
 | Foreground | `#E5E9F0` |
-| Cursor     | `#B89BC0` |
-| Pink       | `#E8A4CC` |
+| Cursor     | `#D9A8DD` |
+| Red (Pink) | `#E8A4CC` |
 | Green      | `#A3BE8C` |
-| Yellow     | `#EBCB8B` |
+| Yellow     | `#DFCA9A` |
 | Blue       | `#81A1C1` |
-| Purple     | `#B89BC0` |
+| Purple     | `#C89BD0` |
 | Cyan       | `#8FBCBB` |
 
 ### Light Mode
-WCAG AAA compliant (12.06:1 contrast ratio) for users with dark-interface discomfort.
+WCAG AAA compliant (12.06:1 contrast ratio). Off-white background (`#FAFBFC`) with vivid dark accents, astigmatism-optimized.
+
+| Name       | Hex       |
+| ---------- | --------- |
+| Background | `#FAFBFC` |
+| Foreground | `#2E3440` |
+| Cursor     | `#B266B2` |
+| Red        | `#C41585` |
+| Green      | `#4D7028` |
+| Yellow     | `#8A6000` |
+| Blue       | `#2D6299` |
+| Purple     | `#8839AA` |
+| Cyan       | `#1D7A78` |
 
 ### Sepia Mode
-WCAG AAA compliant (11.05:1 contrast ratio) with warm tones and reduced blue content for extended coding sessions.
+WCAG AAA compliant (11.05:1 contrast ratio). Warm cream background (`#F5F0E6`) for reduced blue-light and extended coding sessions.
+
+| Name       | Hex       |
+| ---------- | --------- |
+| Background | `#F5F0E6` |
+| Foreground | `#3B3228` |
+| Cursor     | `#A35BA3` |
+| Red        | `#B52080` |
+| Green      | `#4A6A28` |
+| Yellow     | `#806000` |
+| Blue       | `#2E5E8A` |
+| Purple     | `#7B3399` |
+| Cyan       | `#1A6B69` |
+
+### Sepia Dark Mode
+WCAG AAA compliant (11.05:1 contrast ratio). Warm dark-brown background (`#2E2A24`); preserves the pre-v3.0 sepia palette.
+
+| Name       | Hex       |
+| ---------- | --------- |
+| Background | `#2E2A24` |
+| Foreground | `#E8E4D8` |
+| Cursor     | `#B89A90` |
+| Red        | `#D8A494` |
+| Green      | `#A3B88C` |
+| Yellow     | `#EBCB8B` |
+| Blue       | `#9A8A7A` |
+| Purple     | `#B89A90` |
+| Cyan       | `#9FBCB8` |
 
 ---
 
-## ⚙️ Customization
+## Accessibility
+
+Alchemist's Orchid is designed with accessibility in mind:
+
+| Mode       | Contrast | WCAG Level |
+| ---------- | -------- | ---------- |
+| Dark       | 10.26:1  | AAA        |
+| Light      | 12.06:1  | AAA        |
+| Sepia      | 11.05:1  | AAA        |
+| Sepia Dark | 11.05:1  | AAA        |
+
+* **Halation Prevention**: Reduced saturation in dark mode (60% pink, 36% purple) to prevent halation for users with astigmatism
+* **Color Blindness**: Colors are tested for accessibility across different types of color blindness
+* **Multiple Modes**: Light and sepia modes provide alternatives for different visual needs
+
+## Customization
 
 ### Color Overrides
 
@@ -237,9 +314,9 @@ You can override any palette color using the `overrides` option:
 require('alchemists-orchid').setup({
   mode = 'dark',
   overrides = {
-    pink = '#FFB3DE',
+    red    = '#FFB3DE',
     purple = '#E5C1F9',
-    bg = '#1E2228',
+    bg     = '#1E2228',
   }
 })
 vim.cmd('colorscheme alchemists-orchid')
@@ -271,21 +348,12 @@ The old override syntax still works for backward compatibility:
 
 ```lua
 -- Old syntax (still supported)
-require('alchemists-orchid').setup({ pink = '#ffb3de', purple = '#e5c1f9' })
+require('alchemists-orchid').setup({ red = '#ffb3de', purple = '#e5c1f9' })
 ```
 
 ---
 
-## 🎯 Accessibility
-
-Alchemist's Orchid is designed with accessibility in mind:
-
-* **WCAG AAA Compliance**: All palette modes meet WCAG AAA contrast requirements
-* **Halation Prevention**: Reduced saturation in dark mode (60% pink, 36% purple) to prevent halation for users with astigmatism
-* **Color Blindness**: Colors are tested for accessibility across different types of color blindness
-* **Multiple Modes**: Light and sepia modes provide alternatives for different visual needs
-
-## 🤝 Contributing
+## Contributing
 
 Pull requests, issues, and feature requests are welcome. Feel free to:
 
@@ -296,7 +364,6 @@ Pull requests, issues, and feature requests are welcome. Feel free to:
 
 ---
 
-## 📄 License
+## License
 
 This project is licensed under the [MIT License](LICENSE).
-

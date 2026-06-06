@@ -2,8 +2,8 @@
 -- Format: MAJOR.MINOR.PATCH[-PRERELEASE][+BUILD]
 
 return {
-  major = 2,
-  minor = 1,
+  major = 3,
+  minor = 0,
   patch = 0,
   prerelease = nil,  -- e.g., "alpha.1", "beta.2", "rc.1"
   build = nil,       -- e.g., "20240101", "abc123"
